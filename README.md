@@ -1,3 +1,3 @@
-# Cancer Cell Classificcation
+# Cancer Cell Object Detection
 
 Download Model From : https://drive.google.com/drive/folders/13chUYyDxCwCavEKip0pLNQYoUKObUjIn?usp=drive_link

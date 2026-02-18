@@ -1,3 +1,5 @@
+import os
+import gdown
 import streamlit as st
 from PIL import Image
 import torch
@@ -8,19 +10,33 @@ from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from prediction import predict_and_draw
 
 # Set title 
-st.title('Cancer Cell Classification & Detection')
+st.title('Cancer Cell Object Detection')
 st.header('Please upload a picture')
 
 @st.cache_resource
 def load_model():
-    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=None)
+    model_path = 'faster_rcnn_best.pth'
     
-    # กำหนดจำนวน Class (รวม Background)
+    # 1. เช็กว่าไฟล์โมเดลมีอยู่ในระบบ Streamlit Cloud หรือยัง
+    if not os.path.exists(model_path):
+        st.warning("กำลังดาวน์โหลดโมเดลขนาดใหญ่ โปรดรอสักครู่... (ทำแค่ครั้งแรก)")
+        
+        # 2. นำ File ID ที่ได้จาก Step 1 มาใส่ตรงนี้
+        file_id = '1aisVcXuQJMHxIzg-BTiwUoM27SDrY4iL'
+        url = f'https://drive.google.com/uc?id={file_id}'
+        
+        # 3. สั่งดาวน์โหลด
+        gdown.download(url, model_path, quiet=False)
+        st.success("ดาวน์โหลดโมเดลสำเร็จ!")
+
+    # 4. โหลดโครงสร้างโมเดล Faster R-CNN (โค้ดเดิมของคุณ)
+    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=None)
     num_classes = 4 
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
 
-    checkpoint = torch.load('faster_rcnn_best.pth', map_location=torch.device('cpu'))
+    # 5. โหลดน้ำหนัก (Weights)
+    checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
     
     if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
         model.load_state_dict(checkpoint['model_state_dict'])
