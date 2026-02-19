@@ -1,8 +1,5 @@
-streamlit
-torch
 torchvision
 matplotlib
 Pillow
 numpy
 gdown
-torchaudio
