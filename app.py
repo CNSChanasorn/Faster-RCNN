@@ -2,9 +2,7 @@ import os
 import gdown
 import streamlit as st
 from PIL import Image
-import torch
-import torchvision
-from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+from ultralytics import YOLO
 
 from prediction import predict_and_draw
 
@@ -13,30 +11,18 @@ st.header('Please upload a picture')
 
 @st.cache_resource
 def load_model():
-    model_path = 'faster_rcnn_best.pth'
+    model_path = 'yolo12n_best.pt'
     
     if not os.path.exists(model_path):
         st.warning("กำลังดาวน์โหลดโมเดลขนาดใหญ่ โปรดรอสักครู่... (ทำแค่ครั้งแรก)")
-        # https://drive.google.com/file/d/1EbDBViXc-IAUgE2dQUrdZzvAvGSTOzNO/view?usp=drive_link
-        file_id = '1EbDBViXc-IAUgE2dQUrdZzvAvGSTOzNO'
+        # Replace this with your YOLO model file ID or path
+        file_id = '1EbDBViXc-IAUgE2dQUrdZzvAvGSTOzNO'  # Update with your YOLO model ID
         url = f'https://drive.google.com/uc?id={file_id}'
         
         gdown.download(url, model_path, quiet=False)
         st.success("ดาวน์โหลดโมเดลสำเร็จ!")
 
-    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=None)
-    num_classes = 4 
-    in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-
-    checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
-    
-    if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
-        model.load_state_dict(checkpoint['model_state_dict'])
-    else:
-        model.load_state_dict(checkpoint)
-
-    model.eval()
+    model = YOLO(model_path)
     return model
 
 model = load_model()
