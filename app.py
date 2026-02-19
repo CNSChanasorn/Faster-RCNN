@@ -27,23 +27,15 @@ def load_model():
     # 1. เช็กว่าไฟล์โมเดลมีอยู่ในระบบ Streamlit Cloud หรือยัง
     if not os.path.exists(model_path):
         st.warning("กำลังดาวน์โหลดโมเดลขนาดใหญ่ โปรดรอสักครู่... (ทำแค่ครั้งแรก)")
-<<<<<<< HEAD
-        # Replace this with your YOLO model file ID or path
-        file_id = '1EbDBViXc-IAUgE2dQUrdZzvAvGSTOzNO'  # Update with your YOLO model ID
-=======
         
         # 2. นำ File ID ที่ได้จาก Step 1 มาใส่ตรงนี้
         file_id = '1aisVcXuQJMHxIzg-BTiwUoM27SDrY4iL'
->>>>>>> parent of dac1c89 (v1.2)
         url = f'https://drive.google.com/uc?id={file_id}'
         
         # 3. สั่งดาวน์โหลด
         gdown.download(url, model_path, quiet=False)
         st.success("ดาวน์โหลดโมเดลสำเร็จ!")
 
-<<<<<<< HEAD
-    model = YOLO(model_path)
-=======
     # 4. โหลดโครงสร้างโมเดล Faster R-CNN (โค้ดเดิมของคุณ)
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=None)
     num_classes = 4 
@@ -59,7 +51,6 @@ def load_model():
         model.load_state_dict(checkpoint)
 
     model.eval()
->>>>>>> parent of dac1c89 (v1.2)
     return model
 
 model = load_model()
@@ -76,7 +67,7 @@ if uploaded_image is not None:
     class_names = ['Background', 'apoptosis', 'normal', 'uncertain']
 
     if st.button('Prediction'):
-        st.write("Processing...")
+        st.write("กำลังประมวลผล...")
         
         # ส่งไปประมวลผลที่ prediction.py
         fig, class_counts = predict_and_draw(model, image, class_names, threshold=0.5)
