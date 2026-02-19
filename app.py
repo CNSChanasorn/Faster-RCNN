@@ -17,8 +17,8 @@ def load_model():
     
     if not os.path.exists(model_path):
         st.warning("กำลังดาวน์โหลดโมเดลขนาดใหญ่ โปรดรอสักครู่... (ทำแค่ครั้งแรก)")
-        
-        file_id = '1aisVcXuQJMHxIzg-BTiwUoM27SDrY4iL'
+        # https://drive.google.com/file/d/1EbDBViXc-IAUgE2dQUrdZzvAvGSTOzNO/view?usp=drive_link
+        file_id = '1EbDBViXc-IAUgE2dQUrdZzvAvGSTOzNO'
         url = f'https://drive.google.com/uc?id={file_id}'
         
         gdown.download(url, model_path, quiet=False)
