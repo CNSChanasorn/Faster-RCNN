@@ -30,31 +30,40 @@ def load_model():
     checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
     
     if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
+        model.load_state_dict(checkpoint['model_state_dict'])
+    else:
+        model.load_state_dict(checkpoint)
 
-model = load_model()
+    return model
 
-uploaded_image = st.file_uploader('Choose an image', type=['jpg', 'jpeg', 'png'])
+def main():
+    model = load_model()
 
-if uploaded_image is not None:
-    image = Image.open(uploaded_image).convert("RGB")
-    st.image(image, caption='Uploaded Image', use_container_width=True)
+    uploaded_image = st.file_uploader('Choose an image', type=['jpg', 'jpeg', 'png'])
 
-    st.header('Predicted Image with Bounding Boxes')
+    if uploaded_image is not None:
+        image = Image.open(uploaded_image).convert("RGB")
+        st.image(image, caption='Uploaded Image', use_container_width=True)
 
-    class_names = ['Background', 'apoptosis', 'normal', 'uncertain']
+        st.header('Predicted Image with Bounding Boxes')
 
-    if st.button('Prediction'):
-        st.write("Processing...")
+        class_names = ['Background', 'apoptosis', 'normal', 'uncertain']
 
-        fig, class_counts = predict_and_draw(model, image, class_names, threshold=0.5)
+        if st.button('Prediction'):
+            st.write("Processing...")
 
-        st.write("## Detection Image")
-        st.pyplot(fig)
+            fig, class_counts = predict_and_draw(model, image, class_names, threshold=0.5)
 
-        st.write("## Prediction Result")
-        total_cells = sum(class_counts.values())
-        st.write(f"**Total Cells Detected: {total_cells}**")
+            st.write("## Detection Image")
+            st.pyplot(fig)
 
-        for class_name, count in class_counts.items():
-            color = "red" if count > 0 else "black"
-            st.write(f"### <span style='color:{color}'>{class_name} : {count} cells</span>", unsafe_allow_html=True)
+            st.write("## Prediction Result")
+            total_cells = sum(class_counts.values())
+            st.write(f"**Total Cells Detected: {total_cells}**")
+
+            for class_name, count in class_counts.items():
+                color = "red" if count > 0 else "black"
+                st.write(f"### <span style='color:{color}'>{class_name} : {count} cells</span>", unsafe_allow_html=True)
+
+if __name__ == "__main__":
+    main()
