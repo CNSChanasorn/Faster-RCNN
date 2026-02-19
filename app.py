@@ -1,8 +1,12 @@
 import os
+import sys
 import gdown
 import streamlit as st
 from PIL import Image
-from ultralytics import YOLO
+
+# Suppress cv2 import issues
+import warnings
+warnings.filterwarnings('ignore')
 
 from prediction import predict_and_draw
 
@@ -11,6 +15,11 @@ st.header('Please upload a picture')
 
 @st.cache_resource
 def load_model():
+    # Lazy import to avoid cv2 issues on startup
+    import os
+    os.environ['OPENCV_VIDEOIO_DEBUG'] = '0'
+    from ultralytics import YOLO
+    
     model_path = 'yolo12n_best.pt'
     
     if not os.path.exists(model_path):
