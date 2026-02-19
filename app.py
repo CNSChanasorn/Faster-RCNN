@@ -50,7 +50,7 @@ if uploaded_image is not None:
     class_names = ['Background', 'apoptosis', 'normal', 'uncertain']
 
     if st.button('Prediction'):
-        st.write("กำลังประมวลผล...")
+        st.write("Processing...")
         
         fig, class_counts = predict_and_draw(model, image, class_names, threshold=0.5)
         
